@@ -9,6 +9,7 @@ import Accommodations from './pages/Accommodations';
 import Jobs from './pages/Jobs';
 import Meals from './pages/Meals';
 import Calendar from './pages/Calendar';
+import EventCalendar from './pages/EventCalendar';
 import Account from './pages/Account';
 import ArrivalDeparture from './pages/ArrivalDeparture';
 import { AuthProvider, useAuth } from './AuthContext';
@@ -97,6 +98,11 @@ function App() {
             </Link>
           </li>
           <li>
+            <Link className={isActive("/events") ? "active" : ""} to="/events">
+              Events
+            </Link>
+          </li>
+          <li>
             <Link className={location.pathname.startsWith('/account') ? "active" : ""} to="/account">
               {isAuthenticated ? "Account" : "Login"}
             </Link>
@@ -131,6 +137,7 @@ function App() {
               <Route path="/jobs" element={<Jobs />} />
               <Route path="/meals" element={<Meals />} />
               <Route path="/calendar" element={<Calendar />} />
+              <Route path="/events" element={<EventCalendar />} />
               <Route path="/account" element={<Account />} />
             </Routes>
           </main>
