@@ -33,16 +33,50 @@ function App() {
     // Render login/logout/account links based on auth state
     const { isAuthenticated } = useAuth();
     const location = useLocation();
+
+    // Helper for active nav detection
+    const isActive = (path) =>
+      location.pathname === path ||
+      (path !== "/" && location.pathname.startsWith(path));
+
     return (
       <nav className="navbar">
         <ul>
-          <li><Link to="/dashboard">Dashboard</Link></li>
-          <li><Link to="/members">Members</Link></li>
-          <li><Link to="/dues">Dues</Link></li>
-          <li><Link to="/accommodations">Accommodations</Link></li>
-          <li><Link to="/jobs">Jobs</Link></li>
-          <li><Link to="/meals">Meals</Link></li>
-          <li><Link to="/calendar">Calendar</Link></li>
+          <li>
+            <Link className={isActive("/dashboard") ? "active" : ""} to="/dashboard">
+              Dashboard
+            </Link>
+          </li>
+          <li>
+            <Link className={isActive("/members") ? "active" : ""} to="/members">
+              Members
+            </Link>
+          </li>
+          <li>
+            <Link className={isActive("/dues") ? "active" : ""} to="/dues">
+              Dues
+            </Link>
+          </li>
+          <li>
+            <Link className={isActive("/accommodations") ? "active" : ""} to="/accommodations">
+              Accommodations
+            </Link>
+          </li>
+          <li>
+            <Link className={isActive("/jobs") ? "active" : ""} to="/jobs">
+              Jobs
+            </Link>
+          </li>
+          <li>
+            <Link className={isActive("/meals") ? "active" : ""} to="/meals">
+              Meals
+            </Link>
+          </li>
+          <li>
+            <Link className={isActive("/calendar") ? "active" : ""} to="/calendar">
+              Calendar
+            </Link>
+          </li>
           <li>
             <Link className={location.pathname.startsWith('/account') ? "active" : ""} to="/account">
               {isAuthenticated ? "Account" : "Login"}
