@@ -72,14 +72,23 @@ function App() {
             </Link>
           </li>
           <li>
-            {/* Meals Planning is always visible in navbar */}
+            {/* Meals Planning is always visible and prominently styled */}
             <Link
-              className={isActive("/meals") ? "active" : ""}
+              className={"nav-meals-link" + (isActive("/meals") ? " active prominent" : "")}
               to="/meals"
               aria-current={isActive("/meals") ? "page" : undefined}
               data-testid="nav-meals"
+              style={{
+                fontWeight: 'bold',
+                color: isActive("/meals") ? "var(--text-secondary)" : "var(--text-primary)",
+                background: isActive("/meals") ? "var(--button-bg)" : "transparent",
+                borderRadius: isActive("/meals") ? "7px" : "0",
+                padding: "8px 18px",
+                boxShadow: isActive("/meals") ? "0 2px 10px #beaeef30" : "none",
+                transition: "background 0.2s, color 0.2s"
+              }}
             >
-              Meals
+              🍽️ Meals
             </Link>
           </li>
           <li>
