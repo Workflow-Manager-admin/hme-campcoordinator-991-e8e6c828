@@ -62,6 +62,38 @@
   position: absolute;
   top: 20px;
   right: 20px;
+}
+
+.navbar {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background: var(--bg-secondary);
+  padding: 0.5rem 0;
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar li {
+}
+
+.navbar a {
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+  font-size: 1.1rem;
+}
+
+.navbar a:hover, .navbar a.active {
+  color: var(--text-secondary);
+}
   background-color: var(--button-bg);
   color: var(--button-text);
   border: none;
@@ -72,8 +104,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
+ 
 .theme-toggle:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
