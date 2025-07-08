@@ -72,7 +72,11 @@ function App() {
             </Link>
           </li>
           <li>
-            <Link className={isActive("/meals") ? "active" : ""} to="/meals">
+            <Link
+              className={isActive("/meals") ? "active" : ""}
+              to="/meals"
+              aria-current={isActive("/meals") ? "page" : undefined}
+            >
               Meals
             </Link>
           </li>
