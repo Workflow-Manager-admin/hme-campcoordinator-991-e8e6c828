@@ -72,10 +72,12 @@ function App() {
             </Link>
           </li>
           <li>
+            {/* Meals Planning is always visible in navbar */}
             <Link
               className={isActive("/meals") ? "active" : ""}
               to="/meals"
               aria-current={isActive("/meals") ? "page" : undefined}
+              data-testid="nav-meals"
             >
               Meals
             </Link>
