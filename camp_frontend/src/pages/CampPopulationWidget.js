@@ -35,46 +35,86 @@ function CampPopulationWidget() {
     return () => { active = false; };
   }, []);
 
-  if (loading) return <div>Camp Population: ...</div>;
+  if (loading) return (
+    <div className="loading">
+      <div className="spinner"></div>
+      Loading camp population...
+    </div>
+  );
+  
   return (
-    <div style={{
-      display: "flex", gap: 18, background: "#f1f0f6", borderRadius: 12,
-      boxShadow: "0 2px 6px #2b2b2290", padding: "16px 18px", alignItems: "center",
-      margin: "16px 0 8px 0", fontSize: 18, fontWeight: 600
-    }}>
-      <span>
-        <span style={{
-          background: "#48d165",
-          color: "#fff",
-          padding: "0.23em 1.05em",
-          borderRadius: 14, marginRight: 6
+    <div className="card" style={{ marginBottom: 'var(--spacing-lg)' }}>
+      <h3 style={{ marginBottom: 'var(--spacing-md)' }}>Camp Population Status</h3>
+      <div style={{
+        display: "flex", 
+        gap: 'var(--spacing-md)', 
+        alignItems: "center",
+        flexWrap: "wrap",
+        justifyContent: "center"
+      }}>
+        <div className="status-card" style={{
+          textAlign: 'center',
+          padding: 'var(--spacing-md)',
+          borderRadius: 'var(--border-radius-lg)',
+          background: 'rgba(72, 209, 101, 0.1)',
+          border: '2px solid #48d165',
+          minWidth: '100px'
         }}>
-          {counts.onsite}
-        </span>
-        On Site
-      </span>
-      <span>
-        <span style={{
-          background: "#fab006",
-          color: "#fff",
-          padding: "0.23em 1.05em",
-          borderRadius: 14, marginRight: 6
+          <div style={{
+            fontSize: '2rem',
+            fontWeight: 'bold',
+            color: '#48d165',
+            marginBottom: 'var(--spacing-xs)'
+          }}>
+            {counts.onsite}
+          </div>
+          <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+            On Site
+          </div>
+        </div>
+        
+        <div className="status-card" style={{
+          textAlign: 'center',
+          padding: 'var(--spacing-md)',
+          borderRadius: 'var(--border-radius-lg)',
+          background: 'rgba(250, 176, 6, 0.1)',
+          border: '2px solid #fab006',
+          minWidth: '100px'
         }}>
-          {counts.arriving}
-        </span>
-        En Route
-      </span>
-      <span>
-        <span style={{
-          background: "#72604e",
-          color: "#fff",
-          padding: "0.23em 1.05em",
-          borderRadius: 14, marginRight: 6
+          <div style={{
+            fontSize: '2rem',
+            fontWeight: 'bold',
+            color: '#fab006',
+            marginBottom: 'var(--spacing-xs)'
+          }}>
+            {counts.arriving}
+          </div>
+          <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+            En Route
+          </div>
+        </div>
+        
+        <div className="status-card" style={{
+          textAlign: 'center',
+          padding: 'var(--spacing-md)',
+          borderRadius: 'var(--border-radius-lg)',
+          background: 'rgba(114, 96, 78, 0.1)',
+          border: '2px solid #72604e',
+          minWidth: '100px'
         }}>
-          {counts.departed}
-        </span>
-        Departed
-      </span>
+          <div style={{
+            fontSize: '2rem',
+            fontWeight: 'bold',
+            color: '#72604e',
+            marginBottom: 'var(--spacing-xs)'
+          }}>
+            {counts.departed}
+          </div>
+          <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+            Departed
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

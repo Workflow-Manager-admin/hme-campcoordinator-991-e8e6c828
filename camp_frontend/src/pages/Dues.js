@@ -115,61 +115,62 @@ function Dues() {
         <td>{amount}</td>
         <td>
           {dueRow && dueRow.paid ? (
-            <span style={{ color: "#319176", fontWeight: 600 }}>Paid{dueRow.paid_at && <><br /><span style={{ color: "#444", fontWeight: 400, fontSize: 13 }}>{(new Date(dueRow.paid_at)).toLocaleDateString()}</span></>}</span>
+            <div>
+              <span className="status status-success">Paid</span>
+              {dueRow.paid_at && (
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: 'var(--spacing-xs)' }}>
+                  {(new Date(dueRow.paid_at)).toLocaleDateString()}
+                </div>
+              )}
+            </div>
           ) : (
-            <span style={{ color: "#c23d36", fontWeight: 600 }}>Unpaid</span>
+            <span className="status status-error">Unpaid</span>
           )}
         </td>
         <td>
-          {/* Payment action - only show for own row and unpaid */}
-          {myRow && !isPaid && (
-            <a
-              href={venmoPayLink(member, amount)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn"
-              style={{
-                background: "#FF7043",
-                color: "#fff",
-                marginBottom: 7,
-                display: "block"
-              }}
-            >
-              Pay with Venmo
-            </a>
-          )}
-          {myRow && isAuthenticated && !isPaid && (
-            <button
-              className="btn"
-              style={{ background: "#5d5181", color: "#fff" }}
-              disabled={updatingId === user.id}
-              onClick={confirmSelfPaid}
-            >
-              {updatingId === user.id ? "Saving..." : "Mark as Paid"}
-            </button>
-          )}
-          {/* Admin actions */}
-          {canAdmin && !myRow && (
-            isPaid ? (
-              <button
-                className="btn"
-                style={{ background: "#666", color: "#fff" }}
-                onClick={() => markPaid(member.id, false)}
-                disabled={updatingId === member.id}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xs)' }}>
+            {/* Payment action - only show for own row and unpaid */}
+            {myRow && !isPaid && (
+              <a
+                href={venmoPayLink(member, amount)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-accent btn-small"
+                style={{ textDecoration: 'none' }}
               >
-                Mark Unpaid
-              </button>
-            ) : (
+                Pay with Venmo
+              </a>
+            )}
+            {myRow && isAuthenticated && !isPaid && (
               <button
-                className="btn"
-                style={{ background: "#2cbe6a", color: "#fff" }}
-                onClick={() => markPaid(member.id, true)}
-                disabled={updatingId === member.id}
+                className="btn btn-small"
+                disabled={updatingId === user.id}
+                onClick={confirmSelfPaid}
               >
-                Mark Paid
+                {updatingId === user.id ? "Saving..." : "Mark as Paid"}
               </button>
-            )
-          )}
+            )}
+            {/* Admin actions */}
+            {canAdmin && !myRow && (
+              isPaid ? (
+                <button
+                  className="btn btn-small btn-secondary"
+                  onClick={() => markPaid(member.id, false)}
+                  disabled={updatingId === member.id}
+                >
+                  Mark Unpaid
+                </button>
+              ) : (
+                <button
+                  className="btn btn-small btn-success"
+                  onClick={() => markPaid(member.id, true)}
+                  disabled={updatingId === member.id}
+                >
+                  Mark Paid
+                </button>
+              )
+            )}
+          </div>
         </td>
         <td>
           {/* Venmo TXN (future: could be shown/linked, or input by admin) */}
@@ -186,62 +187,62 @@ function Dues() {
   }
 
   return (
-    <section className="container" style={{ maxWidth: 970, margin: "auto", padding: 18 }}>
-      <h1>Dues & Payments</h1>
-      <p>
-        All camp members must pay dues for participation (default: <strong>${BASE_DUES} per person</strong>).
-        Use the Venmo link to pay, or mark as paid once completed.
-        {role === "lead" || role === "staff" ? <><br />(Staff/Leads can update anyone's status.)</> : null}
-      </p>
-      {error && <div style={{ color: "#b00", margin: 10 }}>{error}</div>}
-      {saveMsg && <div style={{ color: "#319176", margin: 10 }}>{saveMsg}</div>}
-
-      {loading ? (
-        <div>Loading...</div>
-      ) : (
-        <div style={{ overflowX: "auto" }}>
-          <table style={{
-            width: "100%",
-            marginTop: "14px",
-            borderCollapse: "collapse",
-            background: "#f9f9fb",
-            borderRadius: 10,
-            fontSize: 16
-          }}>
-            <thead>
-              <tr style={{ background: "#f3f1f9" }}>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Actions</th>
-                <th>Venmo</th>
-              </tr>
-            </thead>
-            <tbody>
-              {members.map(member => (
-                <TableRow member={member} key={member.id} />
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      <div style={{
-        marginTop: 20,
-        fontSize: 14,
-        color: "#555",
-        background: "#f3e5f5",
-        padding: "18px 16px",
-        borderRadius: 10,
-        maxWidth: 600,
-        marginLeft: "auto",
-        marginRight: "auto"
-      }}>
-        <strong>NOTE:</strong> Payments are processed via Venmo.com/web/app. This app does not store payment details; status updates are manual for now.<br />
-        After paying with Venmo, click <strong>Mark as Paid</strong> to confirm. Staff will review.
+    <div className="container">
+      <div className="section-header-image">
+        💰 Section Header Image: Dues & Payments
       </div>
-    </section>
+      
+      <div className="card">
+        <div className="card-header">
+          <div>
+            <h1 className="card-title">Dues & Payments</h1>
+            <p className="card-subtitle">
+              All camp members must pay dues for participation (default: <strong>${BASE_DUES} per person</strong>)
+            </p>
+          </div>
+        </div>
+
+        <div className="alert alert-info" style={{ marginBottom: 'var(--spacing-lg)' }}>
+          <strong>Payment Instructions:</strong> Use the Venmo link to pay, or mark as paid once completed.
+          {role === "lead" || role === "staff" ? <><br /><strong>Staff/Leads:</strong> You can update anyone's payment status.</> : null}
+        </div>
+
+        {error && <div className="alert alert-error">{error}</div>}
+        {saveMsg && <div className="alert alert-success">{saveMsg}</div>}
+
+        {loading ? (
+          <div className="loading">
+            <div className="spinner"></div>
+            Loading dues information...
+          </div>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                  <th>Venmo</th>
+                </tr>
+              </thead>
+              <tbody>
+                {members.map(member => (
+                  <TableRow member={member} key={member.id} />
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        <div className="alert alert-warning" style={{ marginTop: 'var(--spacing-xl)' }}>
+          <strong>NOTE:</strong> Payments are processed via Venmo.com/web/app. This app does not store payment details; status updates are manual for now.<br />
+          After paying with Venmo, click <strong>Mark as Paid</strong> to confirm. Staff will review.
+        </div>
+      </div>
+    </div>
   );
 }
 

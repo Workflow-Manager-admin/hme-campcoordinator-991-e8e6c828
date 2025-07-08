@@ -76,105 +76,128 @@ function Members() {
 
   // Render
   return (
-    <section className="container" style={{ maxWidth: 980, margin: "auto", padding: 16 }}>
-      <h1>Camp Member Roster</h1>
-      <p>
-        {members.length === 0 && loading === false ? <em>No members yet.</em> : null}
-      </p>
-      {error && <div style={{ color: "crimson" }}>{error}</div>}
-      {inviteStatus && <div style={{ color: "#185" }}>{inviteStatus}</div>}
+    <div className="container">
+      <div className="section-header-image">
+        👥 Section Header Image: Camp Members & Community
+      </div>
+      
+      <div className="card">
+        <div className="card-header">
+          <div>
+            <h1 className="card-title">Camp Member Roster</h1>
+            <p className="card-subtitle">
+              {members.length > 0 ? `${members.length} camp members` : 'No members yet'}
+            </p>
+          </div>
+        </div>
 
-      {/* Invite new member form */}
-      {(role === "staff" || role === "lead") && (
-        <form onSubmit={handleInvite} style={{
-          display: "flex",
-          gap: 8,
-          padding: "10px 0"
-        }}>
-          <input
-            type="email"
-            placeholder="Invite by email"
-            value={inviteEmail}
-            required
-            autoFocus
-            onChange={e => setInviteEmail(e.target.value)}
-            style={{ minWidth: 180 }}
-          />
-          <select value={inviteRole} onChange={e => setInviteRole(e.target.value)}>
-            <option value="participant">Participant</option>
-            <option value="staff">Staff</option>
-            <option value="lead">Lead</option>
-          </select>
-          <button className="btn" type="submit" style={{ minWidth: 110 }}>
-            Invite
-          </button>
-        </form>
-      )}
+        {error && <div className="alert alert-error">{error}</div>}
+        {inviteStatus && <div className="alert alert-success">{inviteStatus}</div>}
 
-      {/* Members roster list */}
-      {loading ? (
-        <div>Loading...</div>
-      ) : (
-        <table
-          style={{
-            width: "100%",
-            marginTop: "2rem",
-            borderCollapse: "collapse",
-            background: "var(--bg-secondary)",
-            borderRadius: 10,
-            overflow: "hidden"
-          }}
-        >
-          <thead style={{ background: "var(--bg-secondary)" }}>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Profile</th>
-              {(role === "lead" || role === "staff") && <th>Actions</th>}
-            </tr>
-          </thead>
-          <tbody>
-            {members.map((member) => (
-              <tr key={member.id}>
-                <td>{member.name || <span style={{ color: "#aaa" }}>-</span>}</td>
-                <td>{member.email}</td>
-                <td>
-                  {role === "lead" ? (
-                    <RoleSelector member={member} />
-                  ) : (
-                    member.role
-                  )}
-                </td>
-                <td>
-                  {member.approved
-                    ? <span style={{ color: "#28b26d" }}>Active</span>
-                    : <span style={{ color: "#af8800" }}>Pending</span>
-                  }
-                </td>
-                <td>
-                  <button className="btn" onClick={() => openEdit(member)}>Edit</button>
-                </td>
-                {(role === "lead" || role === "staff") && (
-                  <td>
-                    {/* Approval toggle */}
-                    {!member.approved && (
-                      <ApproveButton member={member} />
+        {/* Invite new member form */}
+        {(role === "staff" || role === "lead") && (
+          <div className="card" style={{ marginBottom: 'var(--spacing-lg)' }}>
+            <h3>Invite New Member</h3>
+            <form onSubmit={handleInvite} style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 'var(--spacing-sm)',
+              alignItems: "end"
+            }}>
+              <div className="form-group" style={{ minWidth: '200px', marginBottom: 0 }}>
+                <label className="form-label">Email Address</label>
+                <input
+                  type="email"
+                  className="form-input"
+                  placeholder="member@email.com"
+                  value={inviteEmail}
+                  required
+                  onChange={e => setInviteEmail(e.target.value)}
+                />
+              </div>
+              <div className="form-group" style={{ minWidth: '120px', marginBottom: 0 }}>
+                <label className="form-label">Role</label>
+                <select className="form-select" value={inviteRole} onChange={e => setInviteRole(e.target.value)}>
+                  <option value="participant">Participant</option>
+                  <option value="staff">Staff</option>
+                  <option value="lead">Lead</option>
+                </select>
+              </div>
+              <button className="btn" type="submit">
+                Send Invite
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* Members roster list */}
+        {loading ? (
+          <div className="loading">
+            <div className="spinner"></div>
+            Loading members...
+          </div>
+        ) : (
+          <div style={{ overflowX: 'auto' }}>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                  {(role === "lead" || role === "staff") && <th>Admin</th>}
+                </tr>
+              </thead>
+              <tbody>
+                {members.map((member) => (
+                  <tr key={member.id}>
+                    <td>{member.name || <span style={{ color: "var(--text-muted)" }}>-</span>}</td>
+                    <td style={{ fontSize: '0.9rem' }}>{member.email}</td>
+                    <td>
+                      {role === "lead" ? (
+                        <RoleSelector member={member} />
+                      ) : (
+                        <span className="status status-info">{member.role}</span>
+                      )}
+                    </td>
+                    <td>
+                      {member.approved
+                        ? <span className="status status-success">Active</span>
+                        : <span className="status status-warning">Pending</span>
+                      }
+                    </td>
+                    <td>
+                      <button className="btn btn-small" onClick={() => openEdit(member)}>
+                        Edit
+                      </button>
+                    </td>
+                    {(role === "lead" || role === "staff") && (
+                      <td>
+                        {!member.approved && (
+                          <ApproveButton member={member} />
+                        )}
+                      </td>
                     )}
-                  </td>
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {members.length === 0 && !loading && (
+          <div className="widget-image-placeholder">
+            👥 No members yet - invite your first camp member!
+          </div>
+        )}
+      </div>
 
       {/* Edit profile modal/drawer */}
       {showEdit && (
         <MemberProfileEditor member={editMember} onClose={closeEdit} onSaved={closeEdit} />
       )}
-    </section>
+    </div>
   );
 }
 
@@ -201,7 +224,13 @@ function RoleSelector({ member }) {
     setSaving(false);
   }
   return (
-    <select value={curRole} onChange={changeRole} disabled={saving || role !== "lead"}>
+    <select 
+      className="form-select"
+      value={curRole} 
+      onChange={changeRole} 
+      disabled={saving || role !== "lead"}
+      style={{ minWidth: '120px' }}
+    >
       <option value="participant">Participant</option>
       <option value="staff">Staff</option>
       <option value="lead">Lead</option>
@@ -229,7 +258,7 @@ function ApproveButton({ member }) {
   };
   if (role !== "staff" && role !== "lead") return null;
   return (
-    <button className="btn" onClick={approve} disabled={saving}>
+    <button className="btn btn-success btn-small" onClick={approve} disabled={saving}>
       {saving ? "Approving..." : "Approve"}
     </button>
   );
@@ -271,41 +300,55 @@ function MemberProfileEditor({ member, onClose, onSaved }) {
       style={{
         position: "fixed",
         top: 0, left: 0, width: "100vw", height: "100vh",
-        background: "rgba(0,0,0,.32)",
-        zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center"
+        background: "rgba(0,0,0,0.5)",
+        zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center",
+        padding: 'var(--spacing-md)'
       }}
     >
       <form
         onSubmit={handleSave}
+        className="card"
         style={{
-          background: "#fff", color: "#222", borderRadius: 16,
-          padding: 32, minWidth: 320, maxWidth: 400, boxShadow: "0 4px 32px #2b2b2252"
+          background: "var(--bg-card)", 
+          color: "var(--text-primary)", 
+          borderRadius: 'var(--border-radius-xl)',
+          padding: 'var(--spacing-xl)', 
+          minWidth: 320, 
+          maxWidth: 400, 
+          boxShadow: 'var(--shadow-heavy)',
+          margin: 0
         }}
       >
-        <h2>Edit Profile</h2>
-        <label>
-          Name &nbsp;
+        <h2 style={{ marginBottom: 'var(--spacing-lg)' }}>Edit Profile</h2>
+        
+        <div className="form-group">
+          <label className="form-label">
+            Full Name
+          </label>
           <input
             type="text"
+            className="form-input"
             value={name}
             onChange={e => setName(e.target.value)}
-            style={{ width: "100%", padding: 8 }}
+            placeholder="Enter your full name"
           />
-        </label>
-        <br /><br />
-        {error && <div style={{ color: "#b00" }}>{error}</div>}
-        <button className="btn" type="submit" disabled={saving}>
-          {saving ? "Saving..." : "Save"}
-        </button>
-        <button
-          className="btn"
-          type="button"
-          onClick={onClose}
-          disabled={saving}
-          style={{ marginLeft: 16, background: "#aaa" }}
-        >
-          Cancel
-        </button>
+        </div>
+        
+        {error && <div className="alert alert-error">{error}</div>}
+        
+        <div style={{ display: 'flex', gap: 'var(--spacing-sm)', marginTop: 'var(--spacing-lg)' }}>
+          <button className="btn" type="submit" disabled={saving}>
+            {saving ? "Saving..." : "Save Changes"}
+          </button>
+          <button
+            className="btn btn-secondary"
+            type="button"
+            onClick={onClose}
+            disabled={saving}
+          >
+            Cancel
+          </button>
+        </div>
       </form>
     </div>
   );

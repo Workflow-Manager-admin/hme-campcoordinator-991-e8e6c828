@@ -116,7 +116,7 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="App">
-          <header className="App-header" style={{ alignItems: 'flex-start' }}>
+          <header className="App-header">
             <button 
               className="theme-toggle" 
               onClick={toggleTheme}
@@ -124,9 +124,21 @@ function App() {
             >
               {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
             </button>
-            <Navbar />
+            
+            <div className="header-content">
+              <div className="hero-section">
+                <div className="hero-image-placeholder">
+                  🏕️ Hero Image: Burning Man Camp Scene
+                </div>
+                <h1 className="hero-title">HME Camp Coordinator</h1>
+                <p className="hero-subtitle">High Maintenance Entertainment • Black Rock City 2024</p>
+              </div>
+              
+              <Navbar />
+            </div>
           </header>
-          <main style={{ width: '100%', padding: '2rem 0' }}>
+          
+          <main>
             <Routes>
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<Dashboard />} />

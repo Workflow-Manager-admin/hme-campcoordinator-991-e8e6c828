@@ -63,48 +63,74 @@ function Accommodations() {
 
   // Render accommodations list as a table
   function AccommodationsTable() {
-    if (loading) return <div>Loading...</div>;
+    if (loading) return (
+      <div className="loading">
+        <div className="spinner"></div>
+        Loading accommodations...
+      </div>
+    );
+    
     if (accommodations.length === 0)
-      return <div style={{ color: "#888", margin: 18 }}>No accommodations have been added yet.</div>;
+      return (
+        <div className="widget-image-placeholder">
+          🏕️ No accommodations have been added yet - add your first one!
+        </div>
+      );
+    
     return (
-      <table style={{
-        width: "100%", marginTop: 20, borderCollapse: "collapse",
-        borderRadius: 10, overflow: "hidden", background: "#fafafd"
-      }}>
-        <thead>
-          <tr style={{ background: "#f6effb" }}>
-            <th>Type</th>
-            <th>Size (ft)</th>
-            <th>Owner/Contact</th>
-            <th>Vehicle?</th>
-            <th>License Plate</th>
-            <th>Generator?</th>
-            <th>AC?</th>
-            <th>Notes</th>
-            {(role === "lead" || role === "staff") && <th>Actions</th>}
-          </tr>
-        </thead>
-        <tbody>
-        {accommodations.map(acc => (
-          <tr key={acc.id}>
-            <td>{acc.structure_type}</td>
-            <td>{acc.size ? acc.size : "-"}</td>
-            <td>{acc.owner ? acc.owner : "-"}</td>
-            <td>{acc.has_vehicle ? "Yes" : "No"}</td>
-            <td>{acc.vehicle_plate || "-"}</td>
-            <td>{acc.has_generator ? "Yes" : "No"}</td>
-            <td>{acc.has_ac ? "Yes" : "No"}</td>
-            <td>{acc.notes || "-"}</td>
-            {(role === "lead" || role === "staff") && (
+      <div style={{ overflowX: "auto", marginBottom: 'var(--spacing-xl)' }}>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Size (ft)</th>
+              <th>Owner/Contact</th>
+              <th>Vehicle?</th>
+              <th>License Plate</th>
+              <th>Generator?</th>
+              <th>AC?</th>
+              <th>Notes</th>
+              {(role === "lead" || role === "staff") && <th>Actions</th>}
+            </tr>
+          </thead>
+          <tbody>
+          {accommodations.map(acc => (
+            <tr key={acc.id}>
               <td>
-                <button className="btn" onClick={() => openEditor(acc)} style={{marginRight:8}}>Edit</button>
-                <button className="btn" onClick={() => handleDelete(acc.id)} style={{background:"#aa243c",color:"white"}}>Delete</button>
+                <span className="status status-info">{acc.structure_type}</span>
               </td>
-            )}
-          </tr>
-        ))}
-        </tbody>
-      </table>
+              <td>{acc.size ? acc.size : "-"}</td>
+              <td>{acc.owner ? acc.owner : "-"}</td>
+              <td>
+                <span className={`status ${acc.has_vehicle ? 'status-success' : 'status-error'}`}>
+                  {acc.has_vehicle ? "Yes" : "No"}
+                </span>
+              </td>
+              <td style={{ fontSize: '0.9rem' }}>{acc.vehicle_plate || "-"}</td>
+              <td>
+                <span className={`status ${acc.has_generator ? 'status-success' : 'status-error'}`}>
+                  {acc.has_generator ? "Yes" : "No"}
+                </span>
+              </td>
+              <td>
+                <span className={`status ${acc.has_ac ? 'status-success' : 'status-error'}`}>
+                  {acc.has_ac ? "Yes" : "No"}
+                </span>
+              </td>
+              <td style={{ fontSize: '0.9rem' }}>{acc.notes || "-"}</td>
+              {(role === "lead" || role === "staff") && (
+                <td>
+                  <div style={{ display: 'flex', gap: 'var(--spacing-xs)', flexWrap: 'wrap' }}>
+                    <button className="btn btn-small" onClick={() => openEditor(acc)}>Edit</button>
+                    <button className="btn btn-small btn-error" onClick={() => handleDelete(acc.id)}>Delete</button>
+                  </div>
+                </td>
+              )}
+            </tr>
+          ))}
+          </tbody>
+        </table>
+      </div>
     );
   }
 
@@ -114,14 +140,20 @@ function Accommodations() {
     // Visual scale based on size; accommodations rendered as rectangles with label
     const scaleFt = 6; // px per ft
     return (
-      <div style={{
-        width: maxWidth, minHeight: 160, margin: "36px auto 0 auto", background: "#d5d1ea",
-        borderRadius: 16, padding: 24, boxShadow: "0 4px 32px #a2adb490"
-      }}>
-        <h3 style={{color: "#5d5181"}}>Camp Layout Overview</h3>
+      <div className="card" style={{ marginTop: 'var(--spacing-xl)' }}>
+        <h3 style={{ marginBottom: 'var(--spacing-md)' }}>Camp Layout Overview</h3>
+        <div className="card-image-placeholder" style={{ height: '200px', marginBottom: 'var(--spacing-md)' }}>
+          🗺️ Interactive Camp Layout Map
+        </div>
         <div style={{
-          position: "relative", height: 160, background: "#e7f0ee", borderRadius: 12,
-          border: "1px solid #b0a8d2", overflowX: "auto", overflowY: "hidden"
+          position: "relative", 
+          minHeight: 160, 
+          background: "var(--bg-tertiary)", 
+          borderRadius: 'var(--border-radius-lg)',
+          border: "2px solid var(--border-color)", 
+          overflowX: "auto", 
+          overflowY: "hidden",
+          padding: 'var(--spacing-md)'
         }}>
           {accommodations.map((acc, i) => {
             // Size: treat as width x depth or default visual size
@@ -138,57 +170,74 @@ function Accommodations() {
                   top,
                   width: Math.max(34, w*scaleFt),
                   height: Math.max(22, d*2),
-                  background: acc.has_vehicle ? "#ffb947" : "#9be2bf",
-                  border: "2px solid " + (acc.has_ac ? "#ad81e2":"#5d5181"),
-                  color: "#212",
-                  borderRadius: 7,
-                  display: "flex", alignItems:"center", justifyContent: "center",
+                  background: acc.has_vehicle ? "var(--accent-color)" : "var(--success-color)",
+                  border: "2px solid " + (acc.has_ac ? "var(--primary-color)":"var(--secondary-color)"),
+                  color: "white",
+                  borderRadius: 'var(--border-radius-md)',
+                  display: "flex", 
+                  alignItems:"center", 
+                  justifyContent: "center",
                   fontWeight: 600,
-                  fontSize: 15,
+                  fontSize: 12,
                   cursor: "pointer",
-                  boxShadow: "0 2px 10px #bbbcc5a0"
+                  boxShadow: 'var(--shadow-light)',
+                  transition: 'transform var(--transition-fast)'
                 }}
                 title={acc.structure_type + (acc.owner ? " ("+acc.owner+")" : "")}
+                onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+                onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
               >
                 {acc.structure_type}
-                {acc.has_generator && <span style={{marginLeft: 7, fontSize: 13, color:"#6a3758"}}>🔋</span>}
-                {acc.has_ac && <span style={{marginLeft: 7, fontSize: 13, color:"#2171b9"}}>❄️</span>}
+                {acc.has_generator && <span style={{marginLeft: 4, fontSize: 11}}>🔋</span>}
+                {acc.has_ac && <span style={{marginLeft: 4, fontSize: 11}}>❄️</span>}
               </div>
             );
           })}
         </div>
-        <div style={{color: "#636", fontSize:13, marginTop:6}}>Vehicle = 🟧, Non-vehicle = 🟩, Generator = 🔋, AC = ❄️</div>
+        <div style={{color: "var(--text-muted)", fontSize: '0.9rem', marginTop: 'var(--spacing-md)', textAlign: 'center'}}>
+          Vehicle = 🟧, Non-vehicle = 🟩, Generator = 🔋, AC = ❄️
+        </div>
       </div>
     );
   }
 
   return (
-    <section className="container" style={{ maxWidth: 970, margin: "auto", padding: 20 }}>
-      <h1>Accommodations</h1>
-      <p>Manage camp lodging structures (RV, tent, yurt, trailer, etc), vehicle parking, and generator/AC info for placement planning.</p>
-      {(role === "lead" || role === "staff") && (
-        <div style={{ margin: "12px 0" }}>
-          <button className="btn" onClick={() => openEditor(null)}>
-            Add Accommodation
-          </button>
+    <div className="container">
+      <div className="section-header-image">
+        🏕️ Section Header Image: Camp Layout & Accommodations
+      </div>
+      
+      <div className="card">
+        <div className="card-header">
+          <div>
+            <h1 className="card-title">Accommodations</h1>
+            <p className="card-subtitle">
+              Manage camp lodging structures, vehicle parking, and generator/AC info for placement planning
+            </p>
+          </div>
+          {(role === "lead" || role === "staff") && (
+            <button className="btn" onClick={() => openEditor(null)}>
+              Add Accommodation
+            </button>
+          )}
         </div>
-      )}
 
-      {error && <div style={{ color: "crimson", margin: 10 }}>{error}</div>}
-      {saveMsg && <div style={{ color: "#185", margin: 10 }}>{saveMsg}</div>}
+        {error && <div className="alert alert-error">{error}</div>}
+        {saveMsg && <div className="alert alert-success">{saveMsg}</div>}
 
-      <AccommodationsTable />
-      <CampLayoutMap />
+        <AccommodationsTable />
+        <CampLayoutMap />
 
-      {showEditor && (
-        <AccommodationEditor
-          accommodation={editObj}
-          onClose={closeEditor}
-          setError={setError}
-          setSaveMsg={setSaveMsg}
-        />
-      )}
-    </section>
+        {showEditor && (
+          <AccommodationEditor
+            accommodation={editObj}
+            onClose={closeEditor}
+            setError={setError}
+            setSaveMsg={setSaveMsg}
+          />
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -249,101 +298,142 @@ function AccommodationEditor({ accommodation, onClose, setError, setSaveMsg }) {
   return (
     <div style={{
       position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",
-      background: "rgba(0,0,0,0.29)", zIndex: 20,
-      display: "flex", alignItems: "center", justifyContent: "center"
+      background: "rgba(0,0,0,0.5)", zIndex: 20,
+      display: "flex", alignItems: "center", justifyContent: "center",
+      padding: 'var(--spacing-md)'
     }}>
-      <form onSubmit={handleSave} style={{
-        background: "#fff", color: "#222", borderRadius: 14,
-        padding: 30, minWidth: 320, maxWidth: 420, boxShadow: "0 8px 32px #2b2b2252"
+      <form onSubmit={handleSave} className="card" style={{
+        background: "var(--bg-card)", 
+        color: "var(--text-primary)", 
+        borderRadius: 'var(--border-radius-xl)',
+        padding: 'var(--spacing-xl)', 
+        minWidth: 320, 
+        maxWidth: 500, 
+        boxShadow: 'var(--shadow-heavy)',
+        margin: 0,
+        maxHeight: '90vh',
+        overflowY: 'auto'
       }}>
-        <h2>{editing ? "Edit Accommodation" : "Add Accommodation"}</h2>
-        <div style={{ margin: "9px 0" }}>
-          <label>Structure Type<br/>
-            <select required value={structureType} onChange={e => setStructureType(e.target.value)} style={{width:"100%",padding:"7px"}}>
-              <option value="">-- Select --</option>
-              <option>RV</option>
-              <option>Tent</option>
-              <option>Yurt</option>
-              <option>Trailer</option>
-              <option>Dome</option>
-              <option>Box Truck</option>
-              <option>Car/Van</option>
-              <option>Other</option>
-            </select>
-          </label>
+        <h2 style={{ marginBottom: 'var(--spacing-lg)' }}>
+          {editing ? "Edit Accommodation" : "Add Accommodation"}
+        </h2>
+        
+        <div className="form-group">
+          <label className="form-label">Structure Type</label>
+          <select 
+            className="form-select"
+            required 
+            value={structureType} 
+            onChange={e => setStructureType(e.target.value)}
+          >
+            <option value="">-- Select --</option>
+            <option>RV</option>
+            <option>Tent</option>
+            <option>Yurt</option>
+            <option>Trailer</option>
+            <option>Dome</option>
+            <option>Box Truck</option>
+            <option>Car/Van</option>
+            <option>Other</option>
+          </select>
         </div>
-        <div style={{ margin: "9px 0" }}>
-          <label>
-            Size (ft, e.g. 24x8)<br/>
-            <input
-              type="text"
-              required
-              placeholder="24x8"
-              pattern="^\\d{1,3}\\s*x\\s*\\d{1,3}$"
-              value={size}
-              onChange={e => setSize(e.target.value)}
-              style={{ width: "100%", padding: 7 }}
+        
+        <div className="form-group">
+          <label className="form-label">
+            Size (ft, e.g. 24x8)
+          </label>
+          <input
+            type="text"
+            className="form-input"
+            required
+            placeholder="24x8"
+            pattern="^\d{1,3}\s*x\s*\d{1,3}$"
+            value={size}
+            onChange={e => setSize(e.target.value)}
+          />
+        </div>
+        
+        <div className="form-group">
+          <label className="form-label">
+            Owner / Contact
+          </label>
+          <input
+            type="text"
+            className="form-input"
+            value={owner}
+            onChange={e => setOwner(e.target.value)}
+            placeholder="Name or email"
+          />
+        </div>
+        
+        <div className="form-group">
+          <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)' }}>
+            <input 
+              type="checkbox" 
+              checked={hasVehicle} 
+              onChange={e => setHasVehicle(e.target.checked)} 
             />
+            Is this a vehicle?
           </label>
+          {hasVehicle && (
+            <div style={{ marginTop: 'var(--spacing-sm)' }}>
+              <label className="form-label">License Plate</label>
+              <input
+                type="text"
+                className="form-input"
+                value={vehiclePlate}
+                placeholder="ABC123"
+                onChange={e => setVehiclePlate(e.target.value)}
+              />
+            </div>
+          )}
         </div>
-        <div style={{ margin: "9px 0" }}>
-          <label>
-            Owner / Contact<br/>
-            <input
-              type="text"
-              value={owner}
-              onChange={e => setOwner(e.target.value)}
-              style={{ width: "100%", padding: 7 }}
-              placeholder="Name or email"
-            />
-          </label>
+        
+        <div className="form-group">
+          <div style={{ display: 'flex', gap: 'var(--spacing-lg)' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)' }}>
+              <input 
+                type="checkbox" 
+                checked={hasGenerator} 
+                onChange={e => setHasGenerator(e.target.checked)} 
+              />
+              Generator
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)' }}>
+              <input 
+                type="checkbox" 
+                checked={hasAC} 
+                onChange={e => setHasAC(e.target.checked)} 
+              />
+              A/C
+            </label>
+          </div>
         </div>
-        <div style={{ margin: "9px 0" }}>
-          <label>
-            <input type="checkbox" checked={hasVehicle} onChange={e => setHasVehicle(e.target.checked)} />
-            &nbsp; Is this a vehicle?
-          </label>
-          &nbsp;&nbsp;
-          <label>
-            License Plate:&nbsp;
-            <input
-              type="text"
-              value={vehiclePlate}
-              disabled={!hasVehicle}
-              placeholder="ABC123"
-              onChange={e => setVehiclePlate(e.target.value)}
-              style={{padding:"3px 7px"}}
-            />
-          </label>
+        
+        <div className="form-group">
+          <label className="form-label">Notes</label>
+          <input
+            type="text"
+            className="form-input"
+            value={notes}
+            onChange={e => setNotes(e.target.value)}
+            placeholder="Additional notes..."
+          />
         </div>
-        <div style={{ margin: "9px 0" }}>
-          <label>
-            <input type="checkbox" checked={hasGenerator} onChange={e => setHasGenerator(e.target.checked)} />
-            &nbsp; Generator
-          </label>
-          &nbsp;&nbsp;
-          <label>
-            <input type="checkbox" checked={hasAC} onChange={e => setHasAC(e.target.checked)} />
-            &nbsp; A/C
-          </label>
+        
+        <div style={{ display: 'flex', gap: 'var(--spacing-sm)', marginTop: 'var(--spacing-lg)' }}>
+          <button className="btn" type="submit" disabled={saving}>
+            {saving ? "Saving..." : (editing ? "Save Changes" : "Add")}
+          </button>
+          <button 
+            className="btn btn-secondary" 
+            type="button" 
+            onClick={onClose} 
+            disabled={saving}
+          >
+            Cancel
+          </button>
         </div>
-        <div style={{ margin: "9px 0" }}>
-          <label>
-            Notes<br/>
-            <input
-              type="text"
-              value={notes}
-              onChange={e => setNotes(e.target.value)}
-              style={{ width: "100%", padding: 7 }}
-            />
-          </label>
-        </div>
-        {setError && <div style={{ color: "#c00", margin: "7px 0" }}></div>}
-        <button className="btn" type="submit" style={{minWidth:120}} disabled={saving}>
-          {saving ? "Saving..." : (editing ? "Save Changes" : "Add")}
-        </button>
-        <button className="btn" type="button" style={{marginLeft:14, background:"#aaa",color:"white"}} onClick={onClose} disabled={saving}>Cancel</button>
-        {setError && <div style={{ color: "#c00", margin: "7px 0" }}>{setError}</div>}
       </form>
     </div>
   );

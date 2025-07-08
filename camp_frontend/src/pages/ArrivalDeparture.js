@@ -109,125 +109,195 @@ function ArrivalDeparture() {
   members.forEach(m => { memberMap[m.id] = m; });
 
   return (
-    <section className="container" style={{ maxWidth: 840, margin: "auto" }}>
-      <h1>Arrivals & Departures</h1>
-      <p>Log your arrival/departure dates and see current camp attendance. Status auto-updates for all!</p>
-      {!isAuthenticated ? (
-        <div style={{ color: "#a00", padding: 16 }}>
-          Please login to submit your arrival/departure data.
+    <div className="container">
+      <div className="section-header-image">
+        🚐 Section Header Image: Arrivals & Camp Setup
+      </div>
+      
+      <div className="card">
+        <div className="card-header">
+          <div>
+            <h1 className="card-title">Arrivals & Departures</h1>
+            <p className="card-subtitle">Log your arrival/departure dates and see current camp attendance</p>
+          </div>
         </div>
-      ) : (
-        <form onSubmit={handleSubmit}
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            gap: 12,
-            alignItems: "center",
-            marginBottom: 32,
-            flexWrap: "wrap"
-          }}
-        >
-          <label>
-            My Arrival:
-            <input
-              type="datetime-local"
-              required
-              value={myArr}
-              onChange={e => setMyArr(e.target.value)}
-              style={{ marginLeft: 8 }}
-            />
-          </label>
-          <label>
-            My Departure:
-            <input
-              type="datetime-local"
-              value={myDep}
-              onChange={e => setMyDep(e.target.value)}
-              style={{ marginLeft: 8 }}
-            />
-          </label>
-          <button type="submit" className="btn" disabled={saving}>
-            {saving ? "Saving..." : "Save"}
-          </button>
-          {saveStatus && <span style={{ color: "#278142" }}>{saveStatus}</span>}
-          {error && <span style={{ color: "#a00" }}>{error}</span>}
-        </form>
-      )}
+        
+        {!isAuthenticated ? (
+          <div className="alert alert-warning">
+            Please login to submit your arrival/departure data.
+          </div>
+        ) : (
+          <div className="card" style={{ marginBottom: 'var(--spacing-lg)' }}>
+            <h3>Your Arrival & Departure</h3>
+            <form onSubmit={handleSubmit}>
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+                gap: 'var(--spacing-md)',
+                marginBottom: 'var(--spacing-md)'
+              }}>
+                <div className="form-group">
+                  <label className="form-label">
+                    Arrival Date & Time *
+                  </label>
+                  <input
+                    type="datetime-local"
+                    className="form-input"
+                    required
+                    value={myArr}
+                    onChange={e => setMyArr(e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">
+                    Departure Date & Time
+                  </label>
+                  <input
+                    type="datetime-local"
+                    className="form-input"
+                    value={myDep}
+                    onChange={e => setMyDep(e.target.value)}
+                  />
+                </div>
+              </div>
+              
+              <div style={{ display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center', flexWrap: 'wrap' }}>
+                <button type="submit" className="btn" disabled={saving}>
+                  {saving ? "Saving..." : "Save Changes"}
+                </button>
+                {saveStatus && <div className="alert alert-success" style={{ margin: 0, padding: 'var(--spacing-xs) var(--spacing-sm)' }}>{saveStatus}</div>}
+                {error && <div className="alert alert-error" style={{ margin: 0, padding: 'var(--spacing-xs) var(--spacing-sm)' }}>{error}</div>}
+              </div>
+            </form>
+          </div>
+        )}
 
-      <div style={{
-        margin: "24px 0 14px 0",
-        display: "flex",
-        gap: 24,
-        fontWeight: 500,
-        fontSize: 19
-      }}>
-        <span>
-          <span style={{
-            background: "#48d165", color: "#fff", padding: "0.3em 0.85em", borderRadius: 18,
-            boxShadow: "0 2px 8px rgba(55,80,65,0.09)", marginRight: 9
-          }}>{onsite}</span>
-          On Site
-        </span>
-        <span>
-          <span style={{
-            background: "#fab006", color: "#fff", padding: "0.3em 0.85em", borderRadius: 18,
-            boxShadow: "0 2px 8px rgba(110,90,45,0.10)", marginRight: 9
-          }}>{arriving}</span>
-          En Route
-        </span>
-        <span>
-          <span style={{
-            background: "#72604e", color: "#fff", padding: "0.3em 0.85em", borderRadius: 18,
-            boxShadow: "0 2px 8px rgba(70,60,55,0.12)", marginRight: 9
-          }}>{departed}</span>
-          Departed
-        </span>
-      </div>
-      <div style={{ marginBottom: 18, color: "#555", fontSize: 14 }}>
-        Live camp population based on crew data
-      </div>
-
-      <div style={{overflowX:"auto"}}>
-        <table style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          background: "var(--bg-secondary)",
-          borderRadius: 10
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+          gap: 'var(--spacing-md)',
+          marginBottom: 'var(--spacing-lg)'
         }}>
-          <thead>
-            <tr style={{ background: "#f1f0f6" }}>
-              <th style={{ padding: "10px 6px" }}>Name</th>
-              <th>Email</th>
-              <th>Arrival</th>
-              <th>Departure</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sessions.map(s => {
-              const memb = memberMap[s.user_id] || {};
-              const st = computeStatus(s.arrival, s.departure);
-              let style = { color: "#fff", background: st.color, borderRadius: 20, padding: "2px 14px", fontWeight: 600 };
-              return (
-                <tr key={s.user_id}>
-                  <td>{memb.name || <span style={{ color: "#bbb" }}>?</span>}</td>
-                  <td>{memb.email}</td>
-                  <td>{s.arrival ? (new Date(s.arrival)).toLocaleString() : "-"}</td>
-                  <td>{s.departure ? (new Date(s.departure)).toLocaleString() : "-"}</td>
-                  <td>
-                    <span style={style}>{st.label}</span>
-                  </td>
+          <div className="status-card" style={{
+            textAlign: 'center',
+            padding: 'var(--spacing-md)',
+            borderRadius: 'var(--border-radius-lg)',
+            background: 'rgba(72, 209, 101, 0.1)',
+            border: '2px solid #48d165'
+          }}>
+            <div style={{
+              fontSize: '2rem',
+              fontWeight: 'bold',
+              color: '#48d165',
+              marginBottom: 'var(--spacing-xs)'
+            }}>
+              {onsite}
+            </div>
+            <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+              On Site
+            </div>
+          </div>
+          
+          <div className="status-card" style={{
+            textAlign: 'center',
+            padding: 'var(--spacing-md)',
+            borderRadius: 'var(--border-radius-lg)',
+            background: 'rgba(250, 176, 6, 0.1)',
+            border: '2px solid #fab006'
+          }}>
+            <div style={{
+              fontSize: '2rem',
+              fontWeight: 'bold',
+              color: '#fab006',
+              marginBottom: 'var(--spacing-xs)'
+            }}>
+              {arriving}
+            </div>
+            <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+              En Route
+            </div>
+          </div>
+          
+          <div className="status-card" style={{
+            textAlign: 'center',
+            padding: 'var(--spacing-md)',
+            borderRadius: 'var(--border-radius-lg)',
+            background: 'rgba(114, 96, 78, 0.1)',
+            border: '2px solid #72604e'
+          }}>
+            <div style={{
+              fontSize: '2rem',
+              fontWeight: 'bold',
+              color: '#72604e',
+              marginBottom: 'var(--spacing-xs)'
+            }}>
+              {departed}
+            </div>
+            <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+              Departed
+            </div>
+          </div>
+        </div>
+        
+        <p style={{ marginBottom: 'var(--spacing-lg)', color: 'var(--text-muted)', textAlign: 'center' }}>
+          Live camp population based on crew data
+        </p>
+
+        {loading ? (
+          <div className="loading">
+            <div className="spinner"></div>
+            Loading arrivals data...
+          </div>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Arrival</th>
+                  <th>Departure</th>
+                  <th>Status</th>
                 </tr>
-              )
-            })}
-          </tbody>
-        </table>
-        {loading && <div style={{ fontSize: 18, color: "#aaa", marginTop: 10 }}>Loading...</div>}
+              </thead>
+              <tbody>
+                {sessions.map(s => {
+                  const memb = memberMap[s.user_id] || {};
+                  const st = computeStatus(s.arrival, s.departure);
+                  return (
+                    <tr key={s.user_id}>
+                      <td>{memb.name || <span style={{ color: "var(--text-muted)" }}>?</span>}</td>
+                      <td style={{ fontSize: '0.9rem' }}>{memb.email}</td>
+                      <td style={{ fontSize: '0.9rem' }}>{s.arrival ? (new Date(s.arrival)).toLocaleString() : "-"}</td>
+                      <td style={{ fontSize: '0.9rem' }}>{s.departure ? (new Date(s.departure)).toLocaleString() : "-"}</td>
+                      <td>
+                        <span className={`status ${
+                          st.label === 'On Site' ? 'status-success' :
+                          st.label === 'Pending' ? 'status-warning' :
+                          st.label === 'Departed' ? 'status-info' : 'status-error'
+                        }`}>
+                          {st.label}
+                        </span>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+        
+        {sessions.length === 0 && !loading && (
+          <div className="widget-image-placeholder">
+            📅 No arrival data yet - be the first to log your arrival!
+          </div>
+        )}
+        
+        <div className="alert alert-info" style={{ marginTop: 'var(--spacing-lg)' }}>
+          <strong>Note:</strong> Crew status auto-updates based on real-time dates. Update yours anytime!
+        </div>
       </div>
-      <p style={{ marginTop: 16, color: "#5d5181", fontWeight: 500 }}>
-        <strong>Note:</strong> Crew status auto-colors based on real-time dates. Update yours anytime!
-      </p>
-    </section>
+    </div>
   );
 }
 
