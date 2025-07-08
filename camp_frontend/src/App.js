@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import './App.css';
-
-// Importing skeleton page components
+// Import all page components at the very top
 import Dashboard from './pages/Dashboard';
 import Members from './pages/Members';
 import Dues from './pages/Dues';
@@ -10,8 +9,8 @@ import Accommodations from './pages/Accommodations';
 import Jobs from './pages/Jobs';
 import Meals from './pages/Meals';
 import Calendar from './pages/Calendar';
-// Import account/auth components
 import Account from './pages/Account';
+import ArrivalDeparture from './pages/ArrivalDeparture';
 import { AuthProvider, useAuth } from './AuthContext';
 
 // PUBLIC_INTERFACE
@@ -45,6 +44,11 @@ function App() {
           <li>
             <Link className={isActive("/dashboard") ? "active" : ""} to="/dashboard">
               Dashboard
+            </Link>
+          </li>
+          <li>
+            <Link className={isActive("/arrivals") ? "active" : ""} to="/arrivals">
+              Arrivals/Departures
             </Link>
           </li>
           <li>
@@ -105,6 +109,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/arrivals" element={<ArrivalDeparture />} />
               <Route path="/members" element={<Members />} />
               <Route path="/dues" element={<Dues />} />
               <Route path="/accommodations" element={<Accommodations />} />
